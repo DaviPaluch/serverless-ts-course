@@ -1,6 +1,3 @@
-// 'event' vai ser o responsavel por trazer os dados da nossa requisição para nossa função
-// estrutura das funções AWS é baseada em 'event'
-
 import { APIGatewayProxyHandler } from "aws-lambda"
 import { document } from "../utils/dynamodbClient"
 
@@ -14,21 +11,19 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
   const { id, name, grade } = JSON.parse(event.body) as ICreateCertificate
 
-  //adiciona os dados no banco de dados
   await document
     .put({
-      TableName: "user_certificate",
+      TableName: "users_certificate",
       Item: {
         id,
         name,
         grade,
-        created_at: new Date()
+        created_at: new Date().getTime()
       }
     }).promise()
 
-  // 
   const respose = await document.query({
-    TableName: "user_certificate",
+    TableName: "users_certificate",
     KeyConditionExpression: "id = :id",
     ExpressionAttributeValues: {
       ":id": id
